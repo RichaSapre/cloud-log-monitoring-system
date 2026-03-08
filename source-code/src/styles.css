@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --card-bg: theme(colors.white);
+  --card-bg-dark: theme(colors.slate.800);
+  --card-border: theme(colors.slate.200);
+}
+
+.card {
+  @apply rounded-2xl border border-[var(--card-border)] bg-[var(--card-bg)] p-4 shadow-sm dark:bg-[var(--card-bg-dark)] dark:border-slate-700;
+}
+
+.badge {
+  @apply inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium;
+}
