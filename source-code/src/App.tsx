@@ -8,7 +8,7 @@ import AddLogModal from '@/components/AddLogModal'
 import AlertsPanel from '@/components/AlertsPanel'
 import AlertToaster from '@/components/AlertToaster'
 import { evaluateAndNotify } from '@/lib/alerts'
-import { fetchLogs } from '@/lib/api'
+import { fetchLogs, isDemoMode } from '@/lib/api'
 import type { LogRecord } from '@/types'
 
 function uniq<T>(arr: T[]): T[] { return Array.from(new Set(arr)) }
@@ -85,7 +85,16 @@ export default function App() {
     <div className="min-h-screen">
       <Header onRefresh={refresh} onOpenAdd={() => setShowAdd(true)} onOpenAlerts={() => setShowAlerts(true)} lastRefreshed={lastRefreshed} autoRefresh={autoRefresh} setAutoRefresh={setAutoRefresh} />
       <main className="mx-auto max-w-7xl px-6 py-6 space-y-4">
-        {error && <div className="rounded-xl border border-red-300 bg-red-50 p-3 text-red-800">{error}</div>}
+        {isDemoMode && (
+          <div className="rounded-xl border border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50 p-4 text-blue-800 flex items-center gap-3 shadow-sm">
+            <span className="text-lg">🔬</span>
+            <div>
+              <span className="font-semibold">Live Demo Mode</span>
+              <span className="text-blue-600 ml-1">— Displaying simulated cloud log data from 10 microservices. In production, this connects to Google Cloud Pub/Sub, Cloud Functions &amp; Firestore.</span>
+            </div>
+          </div>
+        )}
+        {error && !isDemoMode && <div className="rounded-xl border border-red-300 bg-red-50 p-3 text-red-800">{error}</div>}
         <StatsCards logs={filtered} />
         <TrendsChart logs={filtered} bucketMinutes={60} />
         <Filters
