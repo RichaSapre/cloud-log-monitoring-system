@@ -38,39 +38,42 @@ export default function LogTable({ logs }: Props) {
   }
 
   return (
-    <div className="card overflow-x-auto">
-      <table className="min-w-full text-sm">
+    <div className="card overflow-x-auto !p-0 border-white/5">
+      <table className="min-w-full text-sm font-medium">
         <thead>
-          <tr className="text-left text-slate-600 dark:text-slate-300">
-            <th className="py-2 pr-4">Message</th>
-            <th className="py-2 pr-4">
-              <button className="inline-flex items-center gap-1" onClick={() => toggleSort('severity')}>
-                Severity <ArrowUpDown className="h-4 w-4" />
+          <tr className="text-left text-gray-400 bg-gray-900/50 border-b border-white/10 uppercase tracking-wider text-xs">
+            <th className="py-4 px-6 font-semibold">Message</th>
+            <th className="py-4 px-6 font-semibold">
+              <button className="inline-flex items-center gap-1 hover:text-white transition-colors" onClick={() => toggleSort('severity')}>
+                Severity <ArrowUpDown className="h-4 w-4 opacity-50" />
               </button>
             </th>
-            <th className="py-2 pr-4">
-              <button className="inline-flex items-center gap-1" onClick={() => toggleSort('source')}>
-                Source <ArrowUpDown className="h-4 w-4" />
+            <th className="py-4 px-6 font-semibold">
+              <button className="inline-flex items-center gap-1 hover:text-white transition-colors" onClick={() => toggleSort('source')}>
+                Source <ArrowUpDown className="h-4 w-4 opacity-50" />
               </button>
             </th>
-            <th className="py-2 pr-4">
-              <button className="inline-flex items-center gap-1" onClick={() => toggleSort('timestamp')}>
-                Timestamp <ArrowUpDown className="h-4 w-4" />
+            <th className="py-4 px-6 font-semibold">
+              <button className="inline-flex items-center gap-1 hover:text-white transition-colors" onClick={() => toggleSort('timestamp')}>
+                Timestamp <ArrowUpDown className="h-4 w-4 opacity-50" />
               </button>
             </th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="divide-y divide-white/5">
           {sorted.map((log, idx) => (
-            <tr key={log.id ?? idx} className={clsx('border-t border-slate-100 dark:border-slate-800', idx % 2 === 0 ? 'bg-white/50 dark:bg-slate-900/20' : '')}>
-              <td className="py-2 pr-4 align-top text-slate-900 dark:text-slate-100">{log.message}</td>
-              <td className="py-2 pr-4 align-top"><SeverityBadge value={log.severity} /></td>
-              <td className="py-2 pr-4 align-top text-slate-700 dark:text-slate-300">{log.source}</td>
-              <td className="py-2 pr-4 align-top text-slate-500">{format(new Date(log.timestamp), 'yyyy-MM-dd HH:mm:ss')}</td>
+            <tr key={log.id ?? idx} className={clsx('transition-colors hover:bg-white/5 group', idx % 2 === 0 ? 'bg-transparent' : 'bg-gray-900/20')}>
+              <td className="py-4 px-6 align-top text-gray-200">
+                <div className="font-mono text-xs opacity-0 group-hover:opacity-100 transition-opacity absolute -ml-4 text-brand-500">›</div>
+                {log.message}
+              </td>
+              <td className="py-4 px-6 align-top"><SeverityBadge value={log.severity} /></td>
+              <td className="py-4 px-6 align-top text-brand-300 font-mono text-xs">{log.source}</td>
+              <td className="py-4 px-6 align-top text-gray-500 font-mono text-xs">{format(new Date(log.timestamp), 'yyyy-MM-dd HH:mm:ss')}</td>
             </tr>
           ))}
           {sorted.length === 0 && (
-            <tr><td colSpan={4} className="py-6 text-center text-slate-500">No logs match your filters.</td></tr>
+            <tr><td colSpan={4} className="py-12 text-center text-gray-500">No logs match your filters.</td></tr>
           )}
         </tbody>
       </table>

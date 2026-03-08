@@ -82,19 +82,21 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-transparent">
       <Header onRefresh={refresh} onOpenAdd={() => setShowAdd(true)} onOpenAlerts={() => setShowAlerts(true)} lastRefreshed={lastRefreshed} autoRefresh={autoRefresh} setAutoRefresh={setAutoRefresh} />
-      <main className="mx-auto max-w-7xl px-6 py-6 space-y-4">
+      <main className="mx-auto max-w-7xl px-4 sm:px-6 py-8 space-y-6">
         {isDemoMode && (
-          <div className="rounded-xl border border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50 p-4 text-blue-800 flex items-center gap-3 shadow-sm">
-            <span className="text-lg">🔬</span>
+          <div className="rounded-2xl border border-brand-500/20 bg-brand-500/5 p-4 text-brand-100 flex items-center gap-4 shadow-glass backdrop-blur-md">
+            <div className="flex-shrink-0 w-10 h-10 rounded-full bg-brand-500/20 flex items-center justify-center border border-brand-500/30">
+              <span className="text-xl">🚀</span>
+            </div>
             <div>
-              <span className="font-semibold">Live Demo Mode</span>
-              <span className="text-blue-600 ml-1">— Displaying simulated cloud log data from 10 microservices. In production, this connects to Google Cloud Pub/Sub, Cloud Functions &amp; Firestore.</span>
+              <span className="font-semibold text-white tracking-wide">Showcase Mode Active</span>
+              <span className="text-brand-200/80 ml-2 text-sm">— Displaying live simulated logs from 10 microservices. In production, this connects to GCP Pub/Sub &amp; Firestore.</span>
             </div>
           </div>
         )}
-        {error && !isDemoMode && <div className="rounded-xl border border-red-300 bg-red-50 p-3 text-red-800">{error}</div>}
+        {error && !isDemoMode && <div className="rounded-2xl border border-red-500/30 bg-red-500/10 p-4 text-red-200 backdrop-blur-md shadow-glass">{error}</div>}
         <StatsCards logs={filtered} />
         <TrendsChart logs={filtered} bucketMinutes={60} />
         <Filters

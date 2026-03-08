@@ -4,14 +4,32 @@
 
 :root {
   --card-bg: theme(colors.white);
-  --card-bg-dark: theme(colors.slate.800);
+  --card-bg-dark: rgba(26, 32, 44, 0.6);
   --card-border: theme(colors.slate.200);
+  --card-border-dark: rgba(255, 255, 255, 0.1);
+}
+
+body {
+  /* Subtle mesh gradient background for dark mode */
+  background-color: theme('colors.gray.950');
+  background-image: 
+    radial-gradient(circle at 15% 50%, rgba(14, 165, 233, 0.08), transparent 25%),
+    radial-gradient(circle at 85% 30%, rgba(56, 189, 248, 0.05), transparent 25%);
+  background-attachment: fixed;
 }
 
 .card {
-  @apply rounded-2xl border border-[var(--card-border)] bg-[var(--card-bg)] p-4 shadow-sm dark:bg-[var(--card-bg-dark)] dark:border-slate-700;
+  @apply rounded-2xl border border-[var(--card-border)] bg-[var(--card-bg)] p-5 shadow-sm transition-all duration-300;
+}
+
+.dark .card {
+  @apply bg-[var(--card-bg-dark)] border-[var(--card-border-dark)] shadow-glass backdrop-blur-xl hover:border-brand-500/30;
 }
 
 .badge {
-  @apply inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium;
+  @apply inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold tracking-wide uppercase transition-colors;
+}
+
+.glass-panel {
+  @apply bg-white/5 dark:bg-gray-850/40 backdrop-blur-md border border-white/10 dark:border-white/5 rounded-2xl shadow-glass;
 }

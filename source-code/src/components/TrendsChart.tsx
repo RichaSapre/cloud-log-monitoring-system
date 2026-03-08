@@ -23,21 +23,66 @@ function bucketize(logs: LogRecord[], bucketMinutes: number) {
 
 export default function TrendsChart({ logs, bucketMinutes=60 }: Props) {
   const data = useMemo(() => bucketize(logs, bucketMinutes), [logs, bucketMinutes])
+  
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="glass-panel p-3 shadow-glow !bg-gray-900/90 border-white/10">
+          <p className="text-gray-300 text-xs mb-2">{format(new Date(Number(label)), 'PPpp')}</p>
+          {payload.map((p: any) => (
+            <div key={p.dataKey} className="flex items-center gap-2 text-sm font-medium">
+              <div className="w-2 h-2 rounded-full shadow-[0_0_8px_currentColor]" style={{ backgroundColor: p.color, color: p.color }} />
+              <span className="text-gray-100">{p.dataKey}:</span>
+              <span className="text-white">{p.value}</span>
+            </div>
+          ))}
+        </div>
+      )
+    }
+    return null
+  }
+
   return (
-    <div className="card h-80">
-      <div className="text-sm text-slate-500 mb-2">Logs over time (bucket: {bucketMinutes} min)</div>
-      <ResponsiveContainer width="100%" height="100%">
-        <AreaChart data={data} margin={{ top: 10, right: 20, bottom: 0, left: 0 }}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="time" tickFormatter={(v) => format(new Date(v), 'MM-dd HH:mm')} />
-          <YAxis allowDecimals={false} />
-          <Tooltip labelFormatter={(v) => format(new Date(Number(v)), 'PPpp')} />
-          <Legend />
-          <Area type="monotone" dataKey="DEBUG" stackId="1" />
-          <Area type="monotone" dataKey="INFO" stackId="1" />
-          <Area type="monotone" dataKey="WARN" stackId="1" />
-          <Area type="monotone" dataKey="ERROR" stackId="1" />
-          <Area type="monotone" dataKey="FATAL" stackId="1" />
+    <div className="card h-96 relative group">
+      <div className="absolute inset-0 bg-brand-500/5 blur-3xl rounded-[3rem] -z-10 group-hover:bg-brand-500/10 transition-colors"></div>
+      <div className="text-sm text-gray-400 mb-6 font-medium tracking-wide uppercase flex items-center gap-2">
+        <div className="w-2 h-2 rounded-full bg-brand-500 animate-pulse"></div>
+        Log Volume Trends
+      </div>
+      <ResponsiveContainer width="100%" height="85%">
+        <AreaChart data={data} margin={{ top: 10, right: 10, bottom: 0, left: -20 }}>
+          <defs>
+            <linearGradient id="colorDebug" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#9CA3AF" stopOpacity={0.3}/>
+              <stop offset="95%" stopColor="#9CA3AF" stopOpacity={0.0}/>
+            </linearGradient>
+            <linearGradient id="colorInfo" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#38bdf8" stopOpacity={0.4}/>
+              <stop offset="95%" stopColor="#38bdf8" stopOpacity={0.0}/>
+            </linearGradient>
+            <linearGradient id="colorWarn" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#fbbf24" stopOpacity={0.3}/>
+              <stop offset="95%" stopColor="#fbbf24" stopOpacity={0.0}/>
+            </linearGradient>
+            <linearGradient id="colorError" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#f43f5e" stopOpacity={0.4}/>
+              <stop offset="95%" stopColor="#f43f5e" stopOpacity={0.0}/>
+            </linearGradient>
+            <linearGradient id="colorFatal" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#9f1239" stopOpacity={0.5}/>
+              <stop offset="95%" stopColor="#9f1239" stopOpacity={0.0}/>
+            </linearGradient>
+          </defs>
+          <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
+          <XAxis dataKey="time" tickFormatter={(v) => format(new Date(v), 'HH:mm')} stroke="rgba(255,255,255,0.2)" tick={{ fill: '#9CA3AF', fontSize: 12 }} dy={10} />
+          <YAxis allowDecimals={false} stroke="rgba(255,255,255,0.2)" tick={{ fill: '#9CA3AF', fontSize: 12 }} dx={-10} />
+          <Tooltip content={<CustomTooltip />} cursor={{ stroke: 'rgba(255,255,255,0.1)', strokeWidth: 2, fill: 'rgba(255,255,255,0.02)' }} />
+          <Legend iconType="circle" wrapperStyle={{ paddingTop: '20px', fontSize: '13px', color: '#D1D5DB' }} />
+          <Area type="monotone" dataKey="DEBUG" stackId="1" stroke="#9CA3AF" fill="url(#colorDebug)" strokeWidth={2} activeDot={{ r: 6, strokeWidth: 0, fill: '#9CA3AF' }} />
+          <Area type="monotone" dataKey="INFO" stackId="1" stroke="#38bdf8" fill="url(#colorInfo)" strokeWidth={2} activeDot={{ r: 6, strokeWidth: 0, fill: '#38bdf8' }} />
+          <Area type="monotone" dataKey="WARN" stackId="1" stroke="#fbbf24" fill="url(#colorWarn)" strokeWidth={2} activeDot={{ r: 6, strokeWidth: 0, fill: '#fbbf24' }} />
+          <Area type="monotone" dataKey="ERROR" stackId="1" stroke="#f43f5e" fill="url(#colorError)" strokeWidth={2} activeDot={{ r: 6, strokeWidth: 0, fill: '#f43f5e' }} />
+          <Area type="monotone" dataKey="FATAL" stackId="1" stroke="#9f1239" fill="url(#colorFatal)" strokeWidth={2} activeDot={{ r: 6, strokeWidth: 0, fill: '#9f1239' }} />
         </AreaChart>
       </ResponsiveContainer>
     </div>
