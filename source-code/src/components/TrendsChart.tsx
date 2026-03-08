@@ -21,9 +21,17 @@ function bucketize(logs: LogRecord[], bucketMinutes: number) {
   return Array.from(map.values()).sort((a,b)=>a.time-b.time)
 }
 
-export default function TrendsChart({ logs, bucketMinutes=60 }: Props) {
-  const data = useMemo(() => bucketize(logs, bucketMinutes), [logs, bucketMinutes])
+export default function TrendsChart({ logs, bucketMinutes: defaultBucket=60 }: Props) {
+  const [bucket, setBucket] = React.useState(defaultBucket)
+  const data = useMemo(() => bucketize(logs, bucket), [logs, bucket])
   
+  const options = [
+    { label: '5m', value: 5 },
+    { label: '15m', value: 15 },
+    { label: '1h', value: 60 },
+    { label: '2h', value: 120 },
+  ]
+
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
@@ -45,11 +53,31 @@ export default function TrendsChart({ logs, bucketMinutes=60 }: Props) {
   return (
     <div className="card h-96 relative group">
       <div className="absolute inset-0 bg-brand-500/5 blur-3xl rounded-[3rem] -z-10 group-hover:bg-brand-500/10 transition-colors"></div>
-      <div className="text-sm text-gray-400 mb-6 font-medium tracking-wide uppercase flex items-center gap-2">
-        <div className="w-2 h-2 rounded-full bg-brand-500 animate-pulse"></div>
-        Log Volume Trends
+      
+      <div className="flex items-center justify-between mb-6">
+        <div className="text-sm text-gray-400 font-medium tracking-wide uppercase flex items-center gap-2">
+          <div className="w-2 h-2 rounded-full bg-brand-500 animate-pulse"></div>
+          Log Volume Trends
+        </div>
+        
+        <div className="flex bg-black/40 p-1 rounded-xl border border-white/5 backdrop-blur-sm">
+          {options.map((opt) => (
+            <button
+              key={opt.value}
+              onClick={() => setBucket(opt.value)}
+              className={`px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-lg transition-all ${
+                bucket === opt.value 
+                ? 'bg-brand-500 text-white shadow-glow' 
+                : 'text-gray-500 hover:text-gray-300'
+              }`}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
       </div>
-      <ResponsiveContainer width="100%" height="85%">
+
+      <ResponsiveContainer width="100%" height="80%">
         <AreaChart data={data} margin={{ top: 10, right: 10, bottom: 0, left: -20 }}>
           <defs>
             <linearGradient id="colorDebug" x1="0" y1="0" x2="0" y2="1">
@@ -77,7 +105,7 @@ export default function TrendsChart({ logs, bucketMinutes=60 }: Props) {
           <XAxis dataKey="time" tickFormatter={(v) => format(new Date(v), 'HH:mm')} stroke="rgba(255,255,255,0.2)" tick={{ fill: '#9CA3AF', fontSize: 12 }} dy={10} />
           <YAxis allowDecimals={false} stroke="rgba(255,255,255,0.2)" tick={{ fill: '#9CA3AF', fontSize: 12 }} dx={-10} />
           <Tooltip content={<CustomTooltip />} cursor={{ stroke: 'rgba(255,255,255,0.1)', strokeWidth: 2, fill: 'rgba(255,255,255,0.02)' }} />
-          <Legend iconType="circle" wrapperStyle={{ paddingTop: '20px', fontSize: '13px', color: '#D1D5DB' }} />
+          <Legend iconType="circle" wrapperStyle={{ paddingTop: '20px', fontSize: '12px', color: '#D1D5DB' }} />
           <Area type="monotone" dataKey="DEBUG" stackId="1" stroke="#9CA3AF" fill="url(#colorDebug)" strokeWidth={2} activeDot={{ r: 6, strokeWidth: 0, fill: '#9CA3AF' }} />
           <Area type="monotone" dataKey="INFO" stackId="1" stroke="#38bdf8" fill="url(#colorInfo)" strokeWidth={2} activeDot={{ r: 6, strokeWidth: 0, fill: '#38bdf8' }} />
           <Area type="monotone" dataKey="WARN" stackId="1" stroke="#fbbf24" fill="url(#colorWarn)" strokeWidth={2} activeDot={{ r: 6, strokeWidth: 0, fill: '#fbbf24' }} />
